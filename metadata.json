@@ -1,0 +1,5 @@
+{
+  "name": "FinSight AI - 智能金融分析平台",
+  "description": "基于 Gemini AI 的全方位金融分析平台，提供新闻聚合、行情分析、个股预测、持仓追踪及行业轮动策略。",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  # 1. 前端服务 (React + Nginx)
+  frontend:
+    build:
+      context: .
+      args:
+        # 【在此处填写】DeepSeek API Key (用于前端网页版个股分析)
+        # 注意：修改此处后必须运行 docker-compose up -d --build 重新构建才能生效
+        - API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxx
+
+    ports:
+      - "80:80"
+    volumes:
+      - ./data_db:/usr/share/nginx/html/data
+    depends_on:
+      - backend
+
+  # 2. 后端服务 (Python 爬虫 + 分析)
+  backend:
+    build: ./backend
+    volumes:
+      - ./data_db:/app/data
+      # - /mnt/nas/finance_data:/app/data/nas_archive
+    environment:
+      # 关键配置：指向宿主机的 Ollama (确保本地已运行 ollama serve)
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      # 关键配置：填写您本地 Ollama 里的模型名字 (用 ollama list 查看，推荐 qwen2.5:7b)
+      - OLLAMA_MODEL=qwen2.5:7b
+      
+      # 【在此处填写】Tushare Token (用于每日复盘获取行情数据)
+      # 注册地址: https://tushare.pro/
+      - TUSHARE_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+      # 【在此处填写】DeepSeek API Key (用于后端自动写研报/点评)
+      # 通常与前端使用的是同一个 Key
+      - DEEPSEEK_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxx
+
+    # 允许容器访问宿主机 (Linux 必需，Win/Mac 也兼容)
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: always
