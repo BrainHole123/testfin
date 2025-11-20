@@ -11,7 +11,7 @@ services:
         - API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxx
 
     ports:
-      - "80:80"
+      - "8080:80"
     volumes:
       - ./data_db:/usr/share/nginx/html/data
     depends_on:
